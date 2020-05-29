@@ -1,6 +1,7 @@
 ﻿using Orleans.Runtime;
 using System;
 using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace Orleans.MultiClient
 {
@@ -15,8 +16,17 @@ namespace Orleans.MultiClient
 
         public IGrainFactory Create<TGrainInterface>()
         {
-            var name = typeof(TGrainInterface).Assembly.FullName;
+           return this.Create(typeof(TGrainInterface).Assembly);
+        }
 
+        public IGrainFactory Create(Type type)
+        {
+            return this.Create(type.Assembly);
+        }
+
+        public IGrainFactory Create(Assembly assembly)
+        {
+            var name = assembly.FullName;
             return clusterClientCache.GetOrAdd(name, (key) =>
             {
                 IClusterClient client = this._serviceProvider.GetRequiredServiceByName<IClusterClientBuilder>(key).Build();

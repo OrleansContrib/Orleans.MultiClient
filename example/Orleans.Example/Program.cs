@@ -44,7 +44,7 @@ namespace Orleans.Example
             var result1 = service.SayHello("Hello World Success Grain1").GetAwaiter().GetResult();
 
 
-            var serviceA = sp.GetRequiredService<IOrleansClient>().GetGrain<IHelloA>(1);
+            var serviceA = sp.GetRequiredService<IOrleansClient>().GetClusterClient(typeof(IHelloA).Assembly) .GetGrain<IHelloA>(1);
             var resultA1 = serviceA.SayHello("Hello World Success GrainA").GetAwaiter().GetResult();
 
 

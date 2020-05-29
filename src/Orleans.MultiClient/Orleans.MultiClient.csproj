@@ -16,8 +16,12 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Orleans.MultiClient.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Client" Version="3.2.0-rc2" />
+    <PackageReference Include="Microsoft.Orleans.Client" Version="3.1.7" />
   </ItemGroup>
 
 </Project>

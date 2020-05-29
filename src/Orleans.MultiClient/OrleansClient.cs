@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Orleans.Runtime;
+using Orleans.Streams;
 
 namespace Orleans.MultiClient
 {
@@ -9,12 +11,25 @@ namespace Orleans.MultiClient
         private readonly IServiceProvider _serviceProvider;
         private readonly IClusterClientFactory _clusterClientFactory;
 
+
         public OrleansClient(IServiceProvider serviceProvider, IClusterClientFactory clusterClientFactory)
         {
             _serviceProvider = serviceProvider;
             _clusterClientFactory = clusterClientFactory;
         }
 
+        public void BindGrainReference(Assembly assembly, IAddressable grain)
+        {
+            _clusterClientFactory.Create(assembly).BindGrainReference(grain);
+        }
+        public IStreamProvider GetStreamProvider(Assembly assembly, string name)
+        {
+            return this.GetClusterClient(assembly).GetStreamProvider(name);
+        }
+        public IClusterClient GetClusterClient(Assembly assembly)
+        {
+            return (IClusterClient)_clusterClientFactory.Create(assembly);
+        }
         public Task<TGrainObserverInterface> CreateObjectReference<TGrainObserverInterface>(IGrainObserver obj) where TGrainObserverInterface : IGrainObserver
         {
             return _clusterClientFactory.Create<TGrainObserverInterface>().CreateObjectReference<TGrainObserverInterface>(obj);
@@ -29,12 +44,10 @@ namespace Orleans.MultiClient
         {
             return _clusterClientFactory.Create<TGrainInterface>().GetGrain<TGrainInterface>(primaryKey, grainClassNamePrefix);
         }
-
         public TGrainInterface GetGrain<TGrainInterface>(long primaryKey, string grainClassNamePrefix = null) where TGrainInterface : IGrainWithIntegerKey
         {
             return _clusterClientFactory.Create<TGrainInterface>().GetGrain<TGrainInterface>(primaryKey, grainClassNamePrefix);
         }
-
         public TGrainInterface GetGrain<TGrainInterface>(string primaryKey, string grainClassNamePrefix = null) where TGrainInterface : IGrainWithStringKey
         {
             return _clusterClientFactory.Create<TGrainInterface>().GetGrain<TGrainInterface>(primaryKey, grainClassNamePrefix);
@@ -48,7 +61,5 @@ namespace Orleans.MultiClient
         {
             return _clusterClientFactory.Create<TGrainInterface>().GetGrain<TGrainInterface>(primaryKey, keyExtension, grainClassNamePrefix);
         }
-
-
     }
 }
