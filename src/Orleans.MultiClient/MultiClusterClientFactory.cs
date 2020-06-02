@@ -36,7 +36,7 @@ namespace Orleans.MultiClient
                 }
                 else
                 {
-                    throw new Exception("not tnitialized clusterClient");
+                    throw new Exception("Can not initialized clusterClient");
                 }
             });
         }
